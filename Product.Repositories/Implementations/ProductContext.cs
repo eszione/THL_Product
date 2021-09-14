@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Product.Types.Models;
 
-namespace Product.Repositories.Context
+namespace Product.Repositories.Implementations
 {
-    public class ProductContext : DbContext
+    public class ProductContext : DbContext, IDbContext 
     {
         public ProductContext(DbContextOptions<ProductContext> options) : base(options)
         {

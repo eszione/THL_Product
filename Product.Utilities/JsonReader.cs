@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Product.API.Helpers
+namespace Product.Utilities
 {
     public static class JsonReader
     {

@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Product.API.Helpers;
-using Product.Repositories.Context;
+using Product.Repositories.Implementations;
+using Product.Repositories.Interfaces;
 using Product.Types.Constants;
 using Product.Types.Models;
+using Product.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,6 +29,10 @@ namespace Product.API
             services.AddControllers();
 
             services.AddDbContext<ProductContext>(options => options.UseInMemoryDatabase("ProductDb"));
+
+            services.AddTransient(typeof(IRepository<,,>), typeof(Repository<,,>));
+
+            services.AddTransient(typeof(IProductRepository), typeof(ProductRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

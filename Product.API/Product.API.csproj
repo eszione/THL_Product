@@ -11,12 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Product.Repositories\Product.Repositories.csproj" />
     <ProjectReference Include="..\Product.Types\Product.Types.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Mocks\products.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\Product.Utilities\Product.Utilities.csproj" />
   </ItemGroup>
 
 
