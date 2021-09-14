@@ -7,5 +7,6 @@ namespace Product.Repositories.Interfaces
     {
         Task<T> GetAsync(K key);
         Task<IEnumerable<T>> ListAsync();
+        Task<T> Create(T obj);
     }
 }

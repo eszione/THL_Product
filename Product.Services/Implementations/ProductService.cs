@@ -10,11 +10,11 @@ namespace Product.Services.Implementations
     public class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
-        private readonly ILogger _logger;
+        private readonly ILogger<ProductService> _logger;
 
         public ProductService(
             IProductRepository repository,
-            ILogger logger)
+            ILogger<ProductService> logger)
         {
             _repository = repository;
             _logger = logger;

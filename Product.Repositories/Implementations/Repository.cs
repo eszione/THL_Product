@@ -15,6 +15,11 @@ namespace Product.Repositories.Implementations
             _context = context;
         }
 
+        public Task<T> Create(T obj)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task<T> GetAsync(K key)
         {
             return await _context.Set<T>().FindAsync(key);

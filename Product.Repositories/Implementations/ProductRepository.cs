@@ -1,7 +1,6 @@
 ﻿using Product.Repositories.Interfaces;
 using Product.Types.Models;
 using Product.Utilities.Extensions;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
