@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Product.Repositories.Interfaces;
+using Product.Services.Interfaces;
 using Product.Types.Constants;
 using Product.Types.Models;
 using System;
@@ -13,14 +13,14 @@ namespace Product.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
-        private readonly IProductRepository _repository;
+        private readonly IProductService _productService;
 
         public ProductController(
             ILogger<ProductController> logger,
-            IProductRepository repository)
+            IProductService productService)
         {
             _logger = logger;
-            _repository = repository;
+            _productService = productService;
         }
 
         [ProducesResponseType(200)]
@@ -37,7 +37,7 @@ namespace Product.API.Controllers
                     return BadRequest("Unable to retrieve the product by id, invalid id");
                 }
 
-                var product = await _repository.GetAsync(id);
+                var product = await _productService.GetByIdAsync(id);
                 if (product == null)
                 {
                     _logger.LogInformation($"Unable to retrieve the product by id, the product with id: {id} does not exist");
@@ -72,7 +72,7 @@ namespace Product.API.Controllers
                     return BadRequest("Unable to retrieve products by name, invalid name");
                 }
 
-                var products = await _repository.ListByNameAsync(name, page.Value, pageSize.Value);
+                var products = await _productService.ListByNameAsync(name, page.Value, pageSize.Value);
                 if (products?.TotalResults == 0)
                 {
                     _logger.LogInformation($"Unable to retrieve products by named, there are no products with the name: {name}");

@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Product.Repositories.Implementations;
 using Product.Repositories.Interfaces;
+using Product.Services.Implementations;
+using Product.Services.Interfaces;
 using Product.Types.Constants;
 using Product.Types.Models;
 using Product.Utilities;
@@ -33,6 +35,8 @@ namespace Product.API
             services.AddTransient(typeof(IRepository<,,>), typeof(Repository<,,>));
 
             services.AddTransient(typeof(IProductRepository), typeof(ProductRepository));
+
+            services.AddTransient(typeof(IProductService), typeof(ProductService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

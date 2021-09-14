@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Implementations\" />
+    <ProjectReference Include="..\Product.Repositories\Product.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
