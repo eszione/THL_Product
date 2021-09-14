@@ -1,4 +1,4 @@
-﻿namespace Product.Types
+﻿namespace Product.Types.Models
 {
     public class ProductRecord
     {

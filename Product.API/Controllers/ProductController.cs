@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Product.Types;
+using Product.Types.Models;
 using System;
 using System.Threading.Tasks;
 
