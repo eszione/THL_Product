@@ -1,5 +1,6 @@
 ﻿using Product.Repositories.Interfaces;
 using Product.Types.Models;
+using Product.Utilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,11 +18,11 @@ namespace Product.Repositories.Implementations
             return await GetAsync(id);
         }
 
-        public async Task<IEnumerable<ProductRecord>> ListByNameAsync(string name)
+        public async Task<PagedResults<ProductRecord>> ListByNameAsync(string name, int page, int pageSize)
         {
             var products = await ListAsync();
 
-            return products.Where(product => product.Name == name);
+            return products.Where(product => product.Name == name).Paginate(page, pageSize);
         }
     }
 }

@@ -79,9 +79,9 @@ namespace Product.Tests.RepositoryTests
 
             var repository = new ProductRepository(context);
 
-            var actual = repository.ListByNameAsync(string.Empty).Result;
+            var actual = repository.ListByNameAsync(string.Empty, 1, 10).Result;
 
-            Assert.Empty(actual);
+            Assert.Empty(actual.Results);
         }
 
         [Fact]
@@ -91,9 +91,9 @@ namespace Product.Tests.RepositoryTests
 
             var repository = new ProductRepository(context);
 
-            var actual = repository.ListByNameAsync(null).Result;
+            var actual = repository.ListByNameAsync(null, 1, 10).Result;
 
-            Assert.Empty(actual);
+            Assert.Empty(actual.Results);
         }
 
         [Fact]
@@ -112,12 +112,12 @@ namespace Product.Tests.RepositoryTests
 
             var repository = new ProductRepository(context);
 
-            var actual = repository.ListByNameAsync("Apple").Result;
+            var actual = repository.ListByNameAsync("Apple", 1, 10).Result;
 
-            Assert.NotEmpty(actual);
-            Assert.Equal(expected.Count, actual.Count());
-            Assert.Equal(expected.First().Id, actual.First().Id);
-            Assert.Equal(expected.First().Name, actual.First().Name);
+            Assert.NotEmpty(actual.Results);
+            Assert.Equal(expected.Count, actual.Results.Count());
+            Assert.Equal(expected.First().Id, actual.Results.First().Id);
+            Assert.Equal(expected.First().Name, actual.Results.First().Name);
         }
 
         [Fact]
@@ -141,10 +141,10 @@ namespace Product.Tests.RepositoryTests
 
             var repository = new ProductRepository(context);
 
-            var actual = repository.ListByNameAsync("Orange").Result;
+            var actual = repository.ListByNameAsync("Orange", 1, 10).Result;
 
-            Assert.NotEmpty(actual);
-            Assert.Equal(expected.Count, actual.Count());
+            Assert.NotEmpty(actual.Results);
+            Assert.Equal(expected.Count, actual.Results.Count());
         }
 
         [Fact]
@@ -154,9 +154,9 @@ namespace Product.Tests.RepositoryTests
 
             var repository = new ProductRepository(context);
 
-            var actual = repository.ListByNameAsync("Watermelon").Result;
+            var actual = repository.ListByNameAsync("Watermelon", 1, 10).Result;
 
-            Assert.Empty(actual);
+            Assert.Empty(actual.Results);
         }
     }
 }

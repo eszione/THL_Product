@@ -7,7 +7,7 @@ namespace Product.Utilities
 {
     public static class JsonReader
     {
-        public async static Task<T> GetFromFile<T>(string fileName)
+        public async static Task<T> GetFromFile<T>(string folderName, string fileName)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace Product.Utilities
 
                 var directoryPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-                using var stream = File.OpenRead(Path.Combine(directoryPath, "Mocks", fileName));
+                using var stream = File.OpenRead(Path.Combine(directoryPath, folderName, fileName));
 
                 return await JsonSerializer.DeserializeAsync<T>(stream, options);
             }

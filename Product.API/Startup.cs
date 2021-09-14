@@ -62,7 +62,7 @@ namespace Product.API
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<ProductContext>();
-                var products = JsonReader.GetFromFile<IEnumerable<ProductRecord>>(FileNames.PRODUCT_FILE).Result;
+                var products = JsonReader.GetFromFile<IEnumerable<ProductRecord>>(FolderNames.MOCK, FileNames.PRODUCT_FILE).Result;
                 if (products?.Any() ?? false)
                 {
                     foreach(var product in products)

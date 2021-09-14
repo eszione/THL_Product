@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Product.Repositories.Interfaces;
+using Product.Types.Constants;
 using Product.Types.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Product.API.Controllers
@@ -59,7 +58,10 @@ namespace Product.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [HttpGet("{name}")]
-        public async Task<ActionResult<IEnumerable<ProductRecord>>> ListByName(string name)
+        public async Task<ActionResult<PagedResults<ProductRecord>>> ListByName(
+            string name, 
+            int? page = Integers.MIN_PAGE_NUMBER, 
+            int? pageSize = Integers.MIN_PAGE_SIZE)
         {
             try
             {
@@ -70,8 +72,8 @@ namespace Product.API.Controllers
                     return BadRequest("Unable to retrieve products by name, invalid name");
                 }
 
-                var products = await _repository.ListByNameAsync(name);
-                if (!products.Any())
+                var products = await _repository.ListByNameAsync(name, page.Value, pageSize.Value);
+                if (products?.TotalResults == 0)
                 {
                     _logger.LogInformation($"Unable to retrieve products by named, there are no products with the name: {name}");
 

@@ -26,7 +26,7 @@ namespace Product.Tests.RepositoryTests
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
-                var products = JsonReader.GetFromFile<IEnumerable<ProductRecord>>(FileNames.PRODUCT_FILE).Result;
+                var products = JsonReader.GetFromFile<IEnumerable<ProductRecord>>(FolderNames.MOCK, FileNames.PRODUCT_FILE).Result;
                 if (products?.Any() ?? false)
                 {
                     foreach (var product in products)
