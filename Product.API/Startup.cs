@@ -60,7 +60,10 @@ namespace Product.API
                 var products = JsonReader.GetFromFile<IEnumerable<ProductRecord>>(FileNames.PRODUCT_FILE).Result;
                 if (products?.Any() ?? false)
                 {
-                    products.Select(product => context.Products.Add(product));
+                    foreach(var product in products)
+                    {
+                        context.Products.Add(product);
+                    }
 
                     context.SaveChanges();
                 }
