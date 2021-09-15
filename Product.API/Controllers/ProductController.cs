@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Product.Services.Interfaces;
 using Product.Types.Constants;
 using Product.Types.DTOs;
+using Product.Types.Enums;
 using Product.Types.Models;
 using System;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Product.API.Controllers
 
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductRecord>> Get(int id)
         {
@@ -45,7 +47,7 @@ namespace Product.API.Controllers
                 {
                     _logger.LogInformation($"Unable to retrieve the product by id, the product with id: {id} does not exist");
 
-                    return BadRequest($"Unable to retrieve the product by id, the product with id: {id} does not exist");
+                    return NotFound($"Unable to retrieve the product by id, the product with id: {id} does not exist");
                 }
 
                 return Ok(product);
@@ -60,6 +62,7 @@ namespace Product.API.Controllers
 
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [HttpGet("{name}")]
         public async Task<ActionResult<PagedResults<ProductRecord>>> ListByName(
             string name, 
@@ -82,7 +85,7 @@ namespace Product.API.Controllers
                 {
                     _logger.LogInformation($"Unable to retrieve products by named, there are no products with the name: {name}");
 
-                    return BadRequest($"Unable to retrieve products by named, there are no products with the name: {name}");
+                    return NotFound($"Unable to retrieve products by named, there are no products with the name: {name}");
                 }
 
                 return Ok(products);
@@ -110,13 +113,16 @@ namespace Product.API.Controllers
                     Name = product.Name
                 };
 
-                var createdProduct = await _productService.CreateProduct(mappedProduct);
-                if (createdProduct == null)
+                var (createdProduct, result) = await _productService.CreateProduct(mappedProduct);
+                switch (result)
                 {
-                    return BadRequest("Unable to create the product");
+                    case ProductCreationResult.Duplicate:
+                        return BadRequest($"Unable to create the product, product with id: {createdProduct.Id} already exists");
+                    case ProductCreationResult.Error:
+                        return BadRequest("Unable to create the product, an error occurred while creating the product");
+                    default:
+                        return Ok(createdProduct);
                 }
-
-                return Ok(createdProduct);
             }
             catch (Exception ex)
             {

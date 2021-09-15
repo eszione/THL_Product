@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Product.Repositories.Interfaces;
 using Product.Services.Interfaces;
+using Product.Types.Enums;
 using Product.Types.Models;
 using System;
 using System.Threading.Tasks;
@@ -20,17 +21,23 @@ namespace Product.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<ProductRecord> CreateProduct(ProductRecord product)
+        public async Task<(ProductRecord, ProductCreationResult)> CreateProduct(ProductRecord product)
         {
             try
             {
-                return await _repository.CreateProduct(product);
+                var existingProduct = await _repository.GetByIdAsync(product.Id);
+                if (existingProduct != null)
+                {
+                    return (existingProduct, ProductCreationResult.Duplicate);
+                }
+
+                return (await _repository.CreateProduct(product), ProductCreationResult.Success);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
 
-                return null;
+                return (null, ProductCreationResult.Error);
             }
         }
 
