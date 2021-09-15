@@ -12,6 +12,11 @@ namespace Product.Repositories.Implementations
         {
         }
 
+        public async Task<ProductRecord> CreateProduct(ProductRecord product)
+        {
+            return await Create(product);
+        }
+
         public async Task<ProductRecord> GetByIdAsync(int id)
         {
             return await GetAsync(id);

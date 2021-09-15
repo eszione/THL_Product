@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Product.Types.Models
+namespace Product.Types.DTOs
 {
-    public class ProductRecord
+    public class CreateProductDto
     {
         [Required]
         public int Id { get; set; }

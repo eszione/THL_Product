@@ -15,9 +15,13 @@ namespace Product.Repositories.Implementations
             _context = context;
         }
 
-        public Task<T> Create(T obj)
+        public async Task<T> Create(T obj)
         {
-            throw new System.NotImplementedException();
+            var result = await _context.AddAsync(obj);
+
+            await _context.SaveChangesAsync();
+
+            return result.Entity;
         }
 
         public async Task<T> GetAsync(K key)

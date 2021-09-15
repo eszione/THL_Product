@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Product.Services.Interfaces;
 using Product.Types.Constants;
+using Product.Types.DTOs;
 using Product.Types.Models;
 using System;
 using System.Threading.Tasks;
@@ -36,6 +37,8 @@ namespace Product.API.Controllers
 
                     return BadRequest("Unable to retrieve the product by id, invalid id");
                 }
+
+                _logger.LogInformation("Retrieving product by id");
 
                 var product = await _productService.GetByIdAsync(id);
                 if (product == null)
@@ -72,6 +75,8 @@ namespace Product.API.Controllers
                     return BadRequest("Unable to retrieve products by name, invalid name");
                 }
 
+                _logger.LogInformation("Retrieving products by name");
+
                 var products = await _productService.ListByNameAsync(name, page.Value, pageSize.Value);
                 if (products?.TotalResults == 0)
                 {
@@ -87,6 +92,37 @@ namespace Product.API.Controllers
                 _logger.LogError(ex.Message);
 
                 return BadRequest("Unable to retrieve product by name, an error occurred");
+            }
+        }
+
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [HttpPost]
+        public async Task<ActionResult<ProductRecord>> Create([FromBody] CreateProductDto product)
+        {
+            try
+            {
+                _logger.LogInformation("Creating product");
+
+                var mappedProduct = new ProductRecord
+                {
+                    Id = product.Id,
+                    Name = product.Name
+                };
+
+                var createdProduct = await _productService.CreateProduct(mappedProduct);
+                if (createdProduct == null)
+                {
+                    return BadRequest("Unable to create the product");
+                }
+
+                return Ok(createdProduct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+
+                return BadRequest("Unable to create the product, an error occurred");
             }
         }
     }

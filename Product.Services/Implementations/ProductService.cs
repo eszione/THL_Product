@@ -20,6 +20,20 @@ namespace Product.Services.Implementations
             _logger = logger;
         }
 
+        public async Task<ProductRecord> CreateProduct(ProductRecord product)
+        {
+            try
+            {
+                return await _repository.CreateProduct(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+
+                return null;
+            }
+        }
+
         public async Task<ProductRecord> GetByIdAsync(int id)
         {
             try
