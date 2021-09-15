@@ -28,7 +28,10 @@ namespace Product.Repositories.Implementations
         {
             var result = await _context.Set<TObj>().FindAsync(key);
 
-            _context.ChangeTracker.Clear();
+            if (result != null)
+            {
+                _context.Entry(result).State = EntityState.Detached;
+            }
 
             return result;
         }
