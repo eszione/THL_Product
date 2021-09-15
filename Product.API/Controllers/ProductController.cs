@@ -98,7 +98,7 @@ namespace Product.API.Controllers
             }
         }
 
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [HttpPost]
         public async Task<ActionResult<ProductRecord>> Create([FromBody] CreateProductDto product)
@@ -116,12 +116,12 @@ namespace Product.API.Controllers
                 var (createdProduct, result) = await _productService.CreateProduct(mappedProduct);
                 switch (result)
                 {
-                    case ProductCreationResult.Duplicate:
+                    case ProductCommandResult.Duplicate:
                         return BadRequest($"Unable to create the product, product with id: {createdProduct.Id} already exists");
-                    case ProductCreationResult.Error:
+                    case ProductCommandResult.Error:
                         return BadRequest("Unable to create the product, an error occurred while creating the product");
                     default:
-                        return Ok(createdProduct);
+                        return Created("/product", createdProduct);
                 }
             }
             catch (Exception ex)
@@ -129,6 +129,42 @@ namespace Product.API.Controllers
                 _logger.LogError(ex.Message);
 
                 return BadRequest("Unable to create the product, an error occurred");
+            }
+        }
+
+        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdateProductDto product)
+        {
+            try
+            {
+                _logger.LogInformation("Updating product");
+
+                var mappedProduct = new ProductRecord
+                {
+                    Id = product.Id,
+                    Name = product.Name
+                };
+
+                var result = await _productService.UpdateProduct(mappedProduct);
+                switch (result)
+                {
+                    case ProductCommandResult.Created:
+                        return Created("/product", mappedProduct);
+                    case ProductCommandResult.Error:
+                        return BadRequest("Unable to update the product, an error occurred while updating the product");
+                    default:
+                        return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+
+                return BadRequest("Unable to update the product, an error occurred");
             }
         }
     }

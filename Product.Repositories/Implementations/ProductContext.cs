@@ -3,7 +3,7 @@ using Product.Types.Models;
 
 namespace Product.Repositories.Implementations
 {
-    public class ProductContext : DbContext, IDbContext 
+    public class ProductContext : DbContext 
     {
         public ProductContext(DbContextOptions<ProductContext> options) : base(options)
         {

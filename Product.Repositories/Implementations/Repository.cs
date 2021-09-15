@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace Product.Repositories.Implementations
 {
-    public class Repository<K, T, C> : IRepository<K, T, C> 
-        where T : class 
-        where C : DbContext
+    public class Repository<TKey, TObj, TContext> : IRepository<TKey, TObj, TContext> 
+        where TObj : class 
+        where TContext : DbContext
     {
-        private readonly C _context;
-        public Repository(C context)
+        private readonly TContext _context;
+        public Repository(TContext context)
         {
             _context = context;
         }
 
-        public async Task<T> Create(T obj)
+        public async Task<TObj> Create(TObj obj)
         {
             var result = await _context.AddAsync(obj);
 
@@ -24,14 +24,25 @@ namespace Product.Repositories.Implementations
             return result.Entity;
         }
 
-        public async Task<T> GetAsync(K key)
+        public async Task<TObj> GetAsync(TKey key)
         {
-            return await _context.Set<T>().FindAsync(key);
+            var result = await _context.Set<TObj>().FindAsync(key);
+
+            _context.ChangeTracker.Clear();
+
+            return result;
         }
 
-        public async Task<IEnumerable<T>> ListAsync()
+        public async Task<IEnumerable<TObj>> ListAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<TObj>().ToListAsync();
+        }
+
+        public async Task Update(TObj obj)
+        {
+            _context.Set<TObj>().Update(obj);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

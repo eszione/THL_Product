@@ -28,5 +28,10 @@ namespace Product.Repositories.Implementations
 
             return products.Where(product => product.Name == name).Paginate(page, pageSize);
         }
+
+        public async Task UpdateProduct(ProductRecord product)
+        {
+            await Update(product);
+        }
     }
 }

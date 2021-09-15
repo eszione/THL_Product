@@ -6,8 +6,9 @@ namespace Product.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<(ProductRecord, ProductCreationResult)> CreateProduct(ProductRecord product);
+        Task<(ProductRecord, ProductCommandResult)> CreateProduct(ProductRecord product);
         Task<ProductRecord> GetByIdAsync(int id);
         Task<PagedResults<ProductRecord>> ListByNameAsync(string name, int page, int pageSize);
+        Task<ProductCommandResult> UpdateProduct(ProductRecord product);
     }
 }

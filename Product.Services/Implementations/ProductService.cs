@@ -21,23 +21,23 @@ namespace Product.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<(ProductRecord, ProductCreationResult)> CreateProduct(ProductRecord product)
+        public async Task<(ProductRecord, ProductCommandResult)> CreateProduct(ProductRecord product)
         {
             try
             {
                 var existingProduct = await _repository.GetByIdAsync(product.Id);
                 if (existingProduct != null)
                 {
-                    return (existingProduct, ProductCreationResult.Duplicate);
+                    return (existingProduct, ProductCommandResult.Duplicate);
                 }
 
-                return (await _repository.CreateProduct(product), ProductCreationResult.Success);
+                return (await _repository.CreateProduct(product), ProductCommandResult.Created);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
 
-                return (null, ProductCreationResult.Error);
+                return (null, ProductCommandResult.Error);
             }
         }
 
@@ -66,6 +66,30 @@ namespace Product.Services.Implementations
                 _logger.LogError(ex.Message);
 
                 return null;
+            }
+        }
+
+        public async Task<ProductCommandResult> UpdateProduct(ProductRecord product)
+        {
+            try
+            {
+                var existingProduct = await _repository.GetByIdAsync(product.Id);
+                if (existingProduct == null)
+                {
+                    await _repository.CreateProduct(product);
+
+                    return ProductCommandResult.Created;
+                }
+
+                await _repository.UpdateProduct(product);
+
+                return ProductCommandResult.Updated;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+
+                return ProductCommandResult.Error;
             }
         }
     }
