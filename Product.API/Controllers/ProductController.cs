@@ -135,7 +135,6 @@ namespace Product.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateProductDto product)
         {
