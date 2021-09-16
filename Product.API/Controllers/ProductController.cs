@@ -5,6 +5,7 @@ using Product.Types.Constants;
 using Product.Types.DTOs;
 using Product.Types.Enums;
 using Product.Types.Models;
+using Product.Utilities.Extensions;
 using System;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace Product.API.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ProductRecord>> Get(int id)
+        public async Task<ActionResult<ProductRecordDto>> Get(int id)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace Product.API.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [HttpGet("{name}")]
-        public async Task<ActionResult<PagedResults<ProductRecord>>> ListByName(
+        public async Task<ActionResult<PagedResults<ProductRecordDto>>> ListByName(
             string name, 
             int? page = Integers.MIN_PAGE_NUMBER, 
             int? pageSize = Integers.MIN_PAGE_SIZE)
@@ -101,19 +102,13 @@ namespace Product.API.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [HttpPost]
-        public async Task<ActionResult<ProductRecord>> Create([FromBody] CreateProductDto product)
+        public async Task<ActionResult<ProductRecordDto>> Create([FromBody] CreateProductDto product)
         {
             try
             {
                 _logger.LogInformation("Creating product");
 
-                var mappedProduct = new ProductRecord
-                {
-                    Id = product.Id,
-                    Name = product.Name
-                };
-
-                var (createdProduct, result) = await _productService.CreateProduct(mappedProduct);
+                var (createdProduct, result) = await _productService.CreateProduct(product.Map());
                 switch (result)
                 {
                     case ProductCommandResult.Duplicate:
@@ -136,23 +131,17 @@ namespace Product.API.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateProductDto product)
+        public async Task<ActionResult<ProductRecordDto>> Update([FromBody] UpdateProductDto product)
         {
             try
             {
                 _logger.LogInformation("Updating product");
 
-                var mappedProduct = new ProductRecord
-                {
-                    Id = product.Id,
-                    Name = product.Name
-                };
-
-                var result = await _productService.UpdateProduct(mappedProduct);
+                var (createdProduct, result) = await _productService.UpdateProduct(product.Map());
                 switch (result)
                 {
                     case ProductCommandResult.Created:
-                        return Created("/product", mappedProduct);
+                        return Created("/product", createdProduct);
                     case ProductCommandResult.Error:
                         return BadRequest("Unable to update the product, an error occurred while updating the product");
                     default:

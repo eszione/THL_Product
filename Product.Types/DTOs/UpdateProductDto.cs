@@ -2,7 +2,7 @@
 
 namespace Product.Types.DTOs
 {
-    public class UpdateProductDto
+    public class UpdateProductDto : IProductDto
     {
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "The id must be greater than 0")]

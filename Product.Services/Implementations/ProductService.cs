@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Product.Repositories.Interfaces;
 using Product.Services.Interfaces;
+using Product.Types.DTOs;
 using Product.Types.Enums;
 using Product.Types.Models;
+using Product.Utilities.Extensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Product.Services.Implementations
@@ -21,31 +24,37 @@ namespace Product.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<(ProductRecord, ProductCommandResult)> CreateProduct(ProductRecord product)
+        public async Task<(ProductRecordDto, ProductCommandResult)> CreateProduct(ProductRecord product)
         {
             try
             {
                 var existingProduct = await _repository.GetByIdAsync(product.Id);
                 if (existingProduct != null)
                 {
-                    return (existingProduct, ProductCommandResult.Duplicate);
+                    return (existingProduct.Map(), ProductCommandResult.Duplicate);
                 }
 
-                return (await _repository.CreateProduct(product), ProductCommandResult.Created);
+                var createdProduct = await _repository.CreateProduct(product);
+                if (createdProduct != null)
+                {
+                    return (createdProduct.Map(), ProductCommandResult.Created);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-
-                return (null, ProductCommandResult.Error);
             }
+
+            return (null, ProductCommandResult.Error);
         }
 
-        public async Task<ProductRecord> GetByIdAsync(int id)
+        public async Task<ProductRecordDto> GetByIdAsync(int id)
         {
             try
             {
-                return await _repository.GetByIdAsync(id);
+                var product = await _repository.GetByIdAsync(id);
+
+                return product?.Map();
             }
             catch (Exception ex)
             {
@@ -55,42 +64,55 @@ namespace Product.Services.Implementations
             }
         }
 
-        public async Task<PagedResults<ProductRecord>> ListByNameAsync(string name, int page, int pageSize)
+        public async Task<PagedResults<ProductRecordDto>> ListByNameAsync(string name, int page, int pageSize)
         {
             try
             {
-                return await _repository.ListByNameAsync(name, page, pageSize);
+                var products = await _repository.ListByNameAsync(name, page, pageSize);
+
+                if (products != null)
+                {
+                    return new PagedResults<ProductRecordDto>
+                    {
+                        Page = products.Page,
+                        PageSize = products.PageSize,
+                        Results = products.Results.Select(product => product.Map()),
+                        TotalPages = products.TotalPages
+                    };
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-
-                return null;
             }
+
+            return null;
         }
 
-        public async Task<ProductCommandResult> UpdateProduct(ProductRecord product)
+        public async Task<(ProductRecordDto, ProductCommandResult)> UpdateProduct(ProductRecord product)
         {
             try
             {
                 var existingProduct = await _repository.GetByIdAsync(product.Id);
-                if (existingProduct == null)
+                if (existingProduct != null)
                 {
-                    await _repository.CreateProduct(product);
+                    await _repository.UpdateProduct(product);
 
-                    return ProductCommandResult.Created;
+                    return (product.Map(), ProductCommandResult.Updated);
                 }
 
-                await _repository.UpdateProduct(product);
-
-                return ProductCommandResult.Updated;
+                var createdProduct = await _repository.CreateProduct(product);
+                if (createdProduct != null)
+                {
+                    return (createdProduct.Map(), ProductCommandResult.Created);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-
-                return ProductCommandResult.Error;
             }
+
+            return (null, ProductCommandResult.Error);
         }
     }
 }
